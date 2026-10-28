@@ -11,7 +11,7 @@
   const exported = (reports as Report[]).filter((r) => r.mergedInto === ticket);
   const merged = uniqueById(exported);
   const groups = groupByProblem(merged, tenantOf, notes.oneDayMove);
-  const counted = groups.reduce((n, g) => n + g.reports.length, 0);
+  const twice = groups.reduce((n, g) => n + g.readAsMove, 0);
   const channels = (c: Record<string, number>) =>
     Object.entries(c)
       .sort((a, b) => b[1] - a[1])
@@ -36,7 +36,7 @@
     {#each groups as g (g.problem)}
       <tr>
         <td><code>{g.problem}</code></td>
-        <td>{g.reports.length}</td>
+        <td>{g.reports.length}{#if g.readAsMove}<sup>*</sup>{/if}</td>
         <td class="small">{channels(g.channels)}</td>
         <td>{g.tenants.length}</td>
         <td>{g.firstSeen} → {g.lastSeen}</td>
@@ -50,10 +50,17 @@
       </tr>
     {/each}
   </tbody>
-  <tfoot>
-    <tr><td>total</td><td>{counted}</td><td colspan="4"></td></tr>
-  </tfoot>
 </table>
+
+{#each groups.filter((g) => g.readAsMove) as g (g.problem)}
+  <p class="note">
+    <sup>*</sup> {g.readAsMove} of these read as a one-day move: counted under <code>{g.problem}</code>, where the
+    desk files them by tenant, and again under <code>day-shift</code>.
+  </p>
+{/each}
+{#if twice}
+  <p class="note">{merged.length} reports, {twice} of them counted twice.</p>
+{/if}
 
 {#each groups as g (g.problem)}
   <details>
@@ -66,7 +73,6 @@
   .sum { font-size: 1.1rem; }
   .note, .small { color: var(--muted); font-size: 0.85em; }
   .warn { color: var(--warn); font-weight: 600; }
-  tfoot td { font-weight: 600; }
   details { margin: 0.4rem 0; }
   .ids { font: 0.8rem var(--mono); color: var(--muted); word-spacing: 0.3em; }
 </style>
