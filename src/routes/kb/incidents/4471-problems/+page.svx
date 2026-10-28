@@ -1,0 +1,68 @@
+---
+layout: runbook
+title: '#4471 · three problems, not one'
+owner: support desk
+status: open
+reviewed: 2026-10-28
+signature: Jan Rubel
+---
+
+<script>
+  import ProblemTable from '#lib/kb/ProblemTable.svelte';
+  import Callout from '#lib/kb/Callout.svelte';
+  import RenderStamp from '#lib/kb/RenderStamp.svelte';
+</script>
+
+[#4471](/kb/incidents/4471) is marked known: one issue, one fix queued. It is not one issue. The
+reports merged into it describe three different problems, and the queued parser fix closes only
+the first. Each problem now has its own ticket.
+
+<Callout kind="warn">
+When the parser fix ships, keep #4471's reports from the <code>hint</code> and <code>day-shift</code>
+rows open. Those people will still get the wrong day.
+</Callout>
+
+## What #4471 holds
+
+<ProblemTable
+  ticket={4471}
+  repo="JanRubel/s01e03-what-it-shows"
+  issues={{ parser: 1, hint: 2, 'day-shift': 3 }}
+/>
+
+## The three problems
+
+**`parser`: the shared parser reads every date month first.** Every tenant on file writes the day
+first, so their dates come out with day and month swapped: "Our 7 April reminder went out on
+4 July." This is the bug #4471 describes, and the fix queued for it.
+
+**`hint`: the booking-v3 form tells people to type the month first.** Its date field prints
+`MM/DD/YYYY`. People type what the hint says, and the form reads it the tenant's way, day first.
+The swap looks the same as `parser`, but the parser fix does not touch it: it only happens on the
+form channel, only for tenants on booking-v3 (Alder Physio, Copper Studio, Pale Harbour). The fix
+is the hint, or reading the date the way the hint asks for it.
+
+**`day-shift`: the date moves by one day.** Nothing is swapped. "Invite says Tuesday 12 May.
+Calendar says Monday 11 May." "Client in Lisbon got Tuesday. Client in Toronto got Monday." One
+invite "arrived before I made the booking". That is a timezone or day-boundary bug, on any tenant
+and any channel. The desk had already noted these reports as a one-day move (`desk-notes.json`)
+and filed them under `parser` anyway, because their tenant writes the day first.
+
+## Why they ended up in one ticket
+
+- Triage merges on the subject line alone ([decision 0001](/kb/decisions/0001-dedupe-by-subject)).
+  The three problems share the same subjects ("Month and day swapped?", "Wrong day on the
+  invite"), so subject matching cannot tell them apart. Both the triage page and decision 0001
+  are past the 180-day review mark.
+- Intake tags each report from the reporter's browser. That is a guess: the cause depends on the
+  tenant's locale, booking form and channel ([how the desk tells causes apart](/kb/triage/dedupe)).
+- The export repeats some reports across its pages. They are counted once here.
+
+## What to do
+
+1. Keep #4471 for `parser`. Its fix is queued.
+2. Work `hint` and `day-shift` in their own tickets, with their own owners.
+3. When a report says "one day off", read the body before merging: a flipped date and a moved
+   date are different bugs.
+
+<RenderStamp {signature} />
