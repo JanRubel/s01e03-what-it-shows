@@ -42,7 +42,7 @@
         <td>{g.firstSeen} → {g.lastSeen}</td>
         <td>
           {#if issues[g.problem]}
-            <a href="https://github.com/{repo}/issues/{issues[g.problem]}">{repo}#{issues[g.problem]}</a>
+            <a href="https://github.com/{repo}/issues/{issues[g.problem]}" title="{repo}#{issues[g.problem]}">#{issues[g.problem]}</a>
           {:else}
             <span class="warn">no ticket yet</span>
           {/if}
