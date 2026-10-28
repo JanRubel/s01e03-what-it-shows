@@ -4,7 +4,7 @@ title: '#4471 · three problems, not one'
 owner: support desk
 status: open
 reviewed: 2026-10-28
-signature: Jan Rubel
+signature: 'v1.eyJzdWIiOiIyMTAzIiwiYXVkIjoiY2hhbGxlbmdlOndoYXQtaXQtc2hvd3MiLCJpYXQiOjE3OTMyMjgwNzUsImV4cCI6MTc5MzMxNDQ3NX0.Hlp6zQcD7fx_uTay-__NgvHN-TvYoDFv4juQK4YPgxs'
 ---
 
 <script>
