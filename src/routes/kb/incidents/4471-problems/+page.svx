@@ -13,13 +13,15 @@ signature: Jan Rubel
   import RenderStamp from '#lib/kb/RenderStamp.svelte';
 </script>
 
-[#4471](/kb/incidents/4471) is marked known: one issue, one fix queued. It is not one issue. The
-reports merged into it describe three different problems, and the queued parser fix closes only
-the first. Each problem now has its own ticket.
+[#4471](/kb/incidents/4471) was marked known: one issue, one fix queued. It was not one issue. The
+reports merged into it describe three different problems. Each problem has its own ticket.
+
+Engineering closed #4471 on 5 October: `parser` is fixed (`fix(dates): parse dd/mm for eu locales`),
+and `hint` is won't fix, because the booking-v3 form is retired. Their tickets are closed.
 
 <Callout kind="warn">
-When the parser fix ships, keep #4471's reports from the <code>hint</code> and <code>day-shift</code>
-rows open. Those people will still get the wrong day.
+<code>day-shift</code> is still open. Neither change touches a date that moves by one day, so those
+people still get the wrong day.
 </Callout>
 
 ## What #4471 holds
@@ -34,13 +36,13 @@ rows open. Those people will still get the wrong day.
 
 **`parser`: the shared parser reads every date month first.** Every tenant on file writes the day
 first, so their dates come out with day and month swapped: "Our 7 April reminder went out on
-4 July." This is the bug #4471 describes, and the fix queued for it.
+4 July." This is the bug #4471 describes. Fixed: `fix(dates): parse dd/mm for eu locales`.
 
 **`hint`: the booking-v3 form tells people to type the month first.** Its date field prints
 `MM/DD/YYYY`. People type what the hint says, and the form reads it the tenant's way, day first.
 The swap looks the same as `parser`, but the parser fix does not touch it: it only happens on the
-form channel, only for tenants on booking-v3 (Alder Physio, Copper Studio, Pale Harbour). The fix
-is the hint, or reading the date the way the hint asks for it.
+form channel, only for tenants on booking-v3 (Alder Physio, Copper Studio, Pale Harbour). Won't
+fix: the booking-v3 form is retired, so no new report can come in this way.
 
 **`day-shift`: the date moves by one day.** Nothing is swapped. "Invite says Tuesday 12 May.
 Calendar says Monday 11 May." "Client in Lisbon got Tuesday. Client in Toronto got Monday." One
@@ -60,8 +62,8 @@ and filed them under `parser` anyway, because their tenant writes the day first.
 
 ## What to do
 
-1. Keep #4471 for `parser`. Its fix is queued.
-2. Work `hint` and `day-shift` in their own tickets, with their own owners.
+1. `parser` and `hint` are done: fixed, and retired.
+2. Give `day-shift` an owner. It is the one problem from #4471 nobody has fixed.
 3. When a report says "one day off", read the body before merging: a flipped date and a moved
    date are different bugs.
 
